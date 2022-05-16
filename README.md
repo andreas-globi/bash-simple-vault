@@ -56,11 +56,11 @@ If no password is provided, it will be prompted for.
 
 To get a value from a vault:
 
-`bash vault.sh get VAULTFILENAME KEYNAME PASSWORD
+`bash vault.sh get VAULTFILENAME KEYNAME PASSWORD`
 
 eg
 
-`bash vault.sh get ~/project/.secrets "SSH_PASS" "MySuperSecretPassword"
+`bash vault.sh get ~/project/.secrets "SSH_PASS" "MySuperSecretPassword"`
 
 This will return the value of the requested key (or blank).
 
