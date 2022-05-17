@@ -8,6 +8,9 @@
 #/   Dump database:     vault.sh dump filename [password]
 #/
 
+# config
+OPENSSLPARAMS="-aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt"
+
 # exit on errors
 set -o errexit
 
@@ -17,7 +20,7 @@ trap '[ "$?" -ne 77 ] || exit 77' ERR
 
 # print usage from comments on top starting with #/
 function usage {
-  grep "^#/" <"$0" | cut -c4-
+	grep "^#/" <"$0" | cut -c4-
 }
 
 # die with error
@@ -42,7 +45,7 @@ function load_vault {
 	PASS=$(require_arg "Password" "$2")
 	CONTENT=""
 	if [ -f "$FILE" ]; then
-		CONTENT=$(openssl enc -aes-256-cbc -md sha512 -a -d -pbkdf2 -iter 100000 -salt -pass pass:$PASS < $FILE)
+		CONTENT=$(openssl enc -d $OPENSSLPARAMS -pass pass:$PASS < $FILE)
 		if [ $? -ne 0 ]; then
 			faildie "ERROR: Failed opening file"
 		fi
@@ -57,7 +60,7 @@ function save_vault {
 	PASS=$(require_arg "Password" "$3")
 	TMPFILE=$(mktemp)
 	echo "$CONTENT" > $TMPFILE
-	ENC=$(openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -pass pass:$PASS < $TMPFILE > $FILE)	
+	ENC=$(openssl enc $OPENSSLPARAMS -pass pass:$PASS < $TMPFILE > $FILE)	
 	rm $TMPFILE
 }
 
@@ -74,7 +77,7 @@ function edit_vault {
 	TMPFILE=$(mktemp)
 	echo "$TXT" > $TMPFILE
 	$EDITOR $TMPFILE
-	ENC=$(openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -pass pass:$PASS < $TMPFILE > $FILE)	
+	ENC=$(openssl enc $OPENSSLPARAMS -pass pass:$PASS < $TMPFILE > $FILE)	
 	rm $TMPFILE
 }
 
@@ -130,28 +133,28 @@ function get_key {
 }
 
 case $1 in
-  help|--help|'')
-    usage
-    exit 0
-    ;;
-  get)
-    VAL=$(get_key "$2" "$3" "$4")
-    echo "$VAL"
-    ;;
-  edit)
-    edit_vault "$2" "$3"
-    ;;
-  test)
-    test_vault "$2" "$3"
-	echo -e "Vault OK"
-    ;;
-  dump)
-    DUMP=$(load_vault "$2" "$3")
-    echo -e "$DUMP"
-    ;;
-  *)
-    echo "ERROR: operation must be 'set', 'get', 'list' or 'dump'" >&2
-    usage
-    exit 1
-    ;;
+	help|--help|'')
+		usage
+		exit 0
+		;;
+	get)
+		VAL=$(get_key "$2" "$3" "$4")
+		echo "$VAL"
+		;;
+	edit)
+		edit_vault "$2" "$3"
+		;;
+	test)
+		test_vault "$2" "$3"
+		echo -e "Vault OK"
+		;;
+	dump)
+		DUMP=$(load_vault "$2" "$3")
+		echo -e "$DUMP"
+		;;
+	*)
+		echo "ERROR: operation must be 'set', 'get', 'list' or 'dump'" >&2
+		usage
+		exit 1
+		;;
 esac
