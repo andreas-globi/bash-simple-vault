@@ -10,6 +10,10 @@ I really like how Ansible Vault works, even though I'm not an Ansible fan.
 
 So I created this. A simple vault for secrets written in Bash.
 
+Main Features:
+ - Mass edit all secrets in the vault
+ - Multi-line secrets (like SSL certificates)
+ - Multiple vaults so you can ship a vault file with your script(s) securely
 
 ## Editing the Vault
 
