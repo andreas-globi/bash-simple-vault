@@ -153,7 +153,7 @@ case $1 in
 		echo -e "$DUMP"
 		;;
 	*)
-		echo "ERROR: operation must be 'set', 'get', 'list' or 'dump'" >&2
+		echo "ERROR: operation must be 'get', 'edit', 'test' or 'dump'" >&2
 		usage
 		exit 1
 		;;
