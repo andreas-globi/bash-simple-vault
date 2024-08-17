@@ -93,7 +93,7 @@ Ask for the password once at the beginning of the script, eg:
 
 ```
 echo "Enter Vault Password:"
-READ -s VAULTPASS
+read -s VAULTPASS
 SSH_PASS=$(bash vault.sh get ~/project/.secrets "SSH_PASS" "$VAULTPASS")
 ```
 
